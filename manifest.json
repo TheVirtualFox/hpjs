@@ -1,0 +1,33 @@
+{
+	"include": [
+		"$(MODDABLE)/examples/manifest_base.json",
+		"$(MODDABLE)/examples/manifest_net.json",
+		"$(MODULES)/files/preference/manifest.json",
+		"$(MODULES)/network/mdns/manifest.json"
+	],
+	"modules": {
+		"*": [
+			"./main",
+			"./ControlPanel",
+			"./HydroponicManager",
+			"./PresetManager",
+			"./Relay",
+			"./RelayManager",
+			"./TimeManager",
+			"./WebSocketManager",
+			"$(MODULES)/network/http/*",
+			"$(MODULES)/network/websocket/*",
+			"$(MODULES)/data/base64/*",
+			"$(MODULES)/data/logical/*",
+			"$(MODULES)/crypt/digest/*",
+			"$(MODULES)/crypt/digest/kcl/*"
+		]
+	},
+	"preload": [
+		"http",
+		"websocket",
+		"base64",
+		"digest",
+		"logical"
+	]
+}
