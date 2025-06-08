@@ -4,7 +4,8 @@
 		"$(MODDABLE)/examples/manifest_net.json",
 		"$(MODULES)/files/preference/manifest.json",
 		"$(MODULES)/network/mdns/manifest.json",
-		"$(MODULES)/pins/i2c/manifest.json"
+		"$(MODULES)/pins/i2c/manifest.json",
+		"$(MODDABLE)/modules/files/file/manifest.json"
 	],
 	"modules": {
 		"*": [

@@ -16,12 +16,14 @@ const CLIENT_ACTIONS = {
     SET_CONTROL_PANEL_REQ: 'SET_CONTROL_PANEL_REQ',
     SET_CURRENT_PRESET_REQ: 'SET_CURRENT_PRESET_REQ',
     SET_TIMESTAMP_REQ: 'SET_TIMESTAMP_REQ',
+    DELETE_ALL_PRESETS_REQ: 'DELETE_ALL_PRESETS_REQ'
 }
 
 const SERVER_ACTIONS = {
     SAVE_PRESET_RES: 'SAVE_PRESET_RES',
     PRESETS_LIST_CHANGED: 'PRESETS_LIST_CHANGED',
     GET_PRESET_RES: 'GET_PRESET_RES',
+    DELETE_ALL_PRESETS_RES: 'DELETE_ALL_PRESETS_RES',
 
     SET_CURRENT_PRESET_RES: 'SET_CURRENT_PRESET_RES',
     CURRENT_PRESET_UPDATED: 'CURRENT_PRESET_UPDATED',
@@ -48,6 +50,7 @@ export class HydroponicManager {
         this.webSocketManager = new WebSocketManager({ name: "hpserver" }, this.onClientConnected.bind(this), this.onRequest.bind(this));
         this.presetManager = new PresetManager(this.onCurrentPresetChanged.bind(this), this.onPresetListChanged.bind(this));
         // this.presetManager.setCurrentPreset(preset);
+        this.presetManager.resetPresets();
         this.controlPanel = new ControlPanel(this.onControlPanelChanged.bind(this));
         this.relayManager = new RelayManager(this.onRelaysStateChanged.bind(this));
         // setInterval(this.onSecondChange.bind(this), 1000);
@@ -83,7 +86,7 @@ export class HydroponicManager {
         switch (action) {
             case CLIENT_ACTIONS.SAVE_PRESET_REQ:
                 // const payload = {id: '', title: "", desc: "", pump: [], light: [], air: [], fan: [] };
-                this.presetManager.savePreset(payload);
+                this.presetManager.savePreset(payload, this.timeManager.getTimestamp());
                 this.webSocketRequest(ws, {
                     action: SERVER_ACTIONS.SAVE_PRESET_RES,
                     requestId,
@@ -92,7 +95,7 @@ export class HydroponicManager {
                 break;
             case CLIENT_ACTIONS.SET_CURRENT_PRESET_REQ:
                 // const payload = {id: ''};
-                this.presetManager.setCurrentPreset(payload);
+                this.presetManager.togglePreset(payload, this.timeManager.getTimestamp());
                 this.webSocketRequest(ws, {
                     action: SERVER_ACTIONS.SET_CURRENT_PRESET_RES,
                     requestId,
@@ -131,6 +134,13 @@ export class HydroponicManager {
                     action: SERVER_ACTIONS.GET_PRESET_RES,
                     requestId,
                     payload: this.presetManager.getPreset(payload)
+                });
+                break;
+            case CLIENT_ACTIONS.DELETE_ALL_PRESETS_REQ:
+                this.webSocketRequest(ws, { // ?
+                    action: SERVER_ACTIONS.DELETE_ALL_PRESETS_RES,
+                    requestId,
+                    payload: this.presetManager.resetPresets(payload)
                 });
                 break;
             default:

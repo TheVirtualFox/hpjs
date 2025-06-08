@@ -116,19 +116,44 @@ export class WebSocketManager {
     }
 
     broadcast(message) {
-        try {
-            for (const client of this.clients) {
-                if (client && typeof client.write === 'function' && client.state === 3) {
+
+        this.clients = this.clients.filter((client) => {
+            try {
+                if (client?.write && client.state === 3) {
                     client.write(message);
-                } else {
-                    trace(`Невалидный клиент в broadcast: ${client}\n`);
+                    return true; // оставить в списке
                 }
+            } catch (e) {
+                trace(`Ошибка при отправке клиенту: ${e}\n`);
             }
-        } catch (e) {
-            trace(JSON.stringify(client));
-        }
+            return false; // удалить клиента
+        });
+
+
+        // try {
+        //     for (const client of this.clients) {
+        //         if (client && typeof client.write === 'function' && client.state === 3) {
+        //             client.write(message);
+        //         } else {
+        //             trace(`Невалидный клиент в broadcast: ${client}\n`);
+        //         }
+        //     }
+        // } catch (e) {
+        //     trace(JSON.stringify(client));
+        // }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 function restart() @"do_restart";
 
