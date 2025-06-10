@@ -9,10 +9,10 @@ export class RelayManager {
     onRelaysStateChanged = null;
 
     constructor(onRelaysStateChanged) {
-        this.pumpRelay = new Relay('Насос', 1, false);
-        this.lightRelay = new Relay('Свет', 2, false);
-        this.airRelay = new Relay('Аэратор', 3, false);
-        this.fanRelay = new Relay('Вентилятор', 4, false);
+        this.pumpRelay = new Relay('Насос', 33, false);
+        this.lightRelay = new Relay('Свет', 25, false);
+        this.airRelay = new Relay('Аэратор', 26, false);
+        this.fanRelay = new Relay('Вентилятор', 27, false);
         this.onRelaysStateChanged = onRelaysStateChanged;
     }
 
