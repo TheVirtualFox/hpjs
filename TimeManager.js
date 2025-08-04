@@ -5,7 +5,7 @@ export class TimeManager { // DS3231
     secondsOfDay = 0;
     onTimestampChanged = null;
     i2c = null;
-    constructor(onTimestampChanged, { sda = 21, scl = 22, hz = 400000 } = {}) {
+    constructor(onTimestampChanged, { sda = 21, scl = 22, hz = 100000 } = {}) {
         this.i2c = new I2C({ sda, scl, hz, address: 0x68 });
         this.onTimestampChanged = onTimestampChanged;
     }

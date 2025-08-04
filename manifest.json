@@ -18,6 +18,7 @@
 			"./RelayManager",
 			"./TimeManager",
 			"./WebSocketManager",
+			"./LCDManager",
 			"$(MODULES)/network/http/*",
 			"$(MODULES)/network/websocket/*",
 			"$(MODULES)/data/base64/*",

@@ -5,7 +5,7 @@ import Net from "net"
 import MDNS from "mdns";
 
 const HTML_TITLE = "Set SSID";
-const AP_NAME = "myAccessPoint";
+const AP_NAME = "myAccessPointHP";
 const AP_PASSWORD = "12345678";
 
 

@@ -3,8 +3,8 @@ import { ControlPanel } from "./ControlPanel";
 import { PresetManager } from "./PresetManager";
 import { RelayManager } from "./RelayManager";
 import { WebSocketManager } from "./WebSocketManager";
+import { LCDManager } from './LCDManager';
 import Timer from "timer";
-
 
 const CLIENT_ACTIONS = {
 
@@ -44,6 +44,7 @@ export class HydroponicManager {
     relayManager = null;
     timeManager = null;
     webSocketManager = null;
+    lcdManager = null;
 
     constructor() {
         this.timeManager = new TimeManager(this.onTimestampChanged.bind(this));
@@ -54,6 +55,18 @@ export class HydroponicManager {
         this.controlPanel = new ControlPanel(this.onControlPanelChanged.bind(this));
         this.relayManager = new RelayManager(this.onRelaysStateChanged.bind(this));
         // setInterval(this.onSecondChange.bind(this), 1000);
+        this.lcdManager = new LCDManager({
+            address: 0x27,
+            onReady: (lcd) => {
+                trace("LCD готов!\n");
+
+                lcd.printRelays(this.relayManager.getState());
+                lcd.printControlPanel(this.controlPanel.getState());
+
+                lcd.printTimestamp(this.timeManager.getTimestamp());
+            }
+        });
+
         const onSecondChange = this.onSecondChange.bind(this);
         Timer.repeat(onSecondChange, 1000);
     }
@@ -176,6 +189,7 @@ export class HydroponicManager {
         if (isManualControl) {
             this.relayManager.setState(state);
         }
+        this.lcdManager.printControlPanel(controlPanel);
 
         this.webSocketBroadcast({
             action: SERVER_ACTIONS.CONTROL_PANEL_CHANGED,
@@ -190,6 +204,7 @@ export class HydroponicManager {
             action: SERVER_ACTIONS.RELAYS_STATE_UPDATED,
             payload: state, // новый список пресетов
         });
+        this.lcdManager.printRelays(state);
     }
 
     // вызывается каждую минуту для оповещения клиентов
@@ -216,9 +231,11 @@ export class HydroponicManager {
         if (!this.controlPanel.getIsManualControl()) {
             this.relayManager.onTimeChange(secondsOfDay, this.presetManager.getCurrentPreset());
         }
+        const ts = this.timeManager.getTimestamp();
         if (secondsOfDay % 60 === 0) {
-            this.onMinuteChanged(this.timeManager.getTimestamp());
+            this.onMinuteChanged(ts);
         }
+        this.lcdManager.printTimestamp(ts);
         // this.timeManager.addSecondsOfDay();
     }
 }
