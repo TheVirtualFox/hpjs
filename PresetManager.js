@@ -284,18 +284,30 @@ export class PresetManager {
     fileManager = null;
 
     _cachedCurrentPreset = null;
+    _cachedPresetList = null; // 🔹 Новый кеш для списка пресетов
 
     constructor(onCurrentPresetChanged, onPresetListChanged) {
         this.fileManager = new FileManager();
         this.onCurrentPresetChanged = onCurrentPresetChanged;
         this.onPresetListChanged = onPresetListChanged;
+
+        // 🔹 Загрузка списка пресетов в кеш при создании
+        this._cachedPresetList = this.fileManager.getJSON(FILES.presetList) || [];
+
+        // 🔹 Устанавливаем текущий пресет, если есть активный
+        const activeId = this.getCurrentPresetId();
+        if (activeId) {
+            const activePreset = this.fileManager.getJSON(FILES.presetFile(activeId));
+            this.setCurrentPreset(activePreset);
+        }
     }
 
     getPresetsList() {
-        return this.fileManager.getJSON(FILES.presetList) || [];
+        return this._cachedPresetList;
     }
 
     updatePresetList(list) {
+        this._cachedPresetList = list; // 🔹 Обновление кеша
         this.fileManager.saveJSON(FILES.presetList, list);
         this.onPresetListChanged?.(list);
 
@@ -319,12 +331,6 @@ export class PresetManager {
         this.onCurrentPresetChanged?.(preset);
     }
 
-    /**
-     * Активирует или сбрасывает активный пресет. 
-     * @param {{ id: string }} presetInfo 
-     * @param {number} timestamp 
-     * @returns {boolean} - true если активирован, false если сброшен
-     */
     togglePreset({ id }, timestamp) {
         const currentId = this.getCurrentPresetId();
         const isActivating = currentId !== id;
@@ -355,11 +361,6 @@ export class PresetManager {
         return isActivating;
     }
 
-    /**
-     * Сохраняет или обновляет пресет
-     * @param {object} preset 
-     * @param {number} timestamp 
-     */
     savePreset(preset, timestamp) {
         if (!preset?.id) return;
 

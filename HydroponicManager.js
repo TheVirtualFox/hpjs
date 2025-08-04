@@ -50,7 +50,7 @@ export class HydroponicManager {
         this.webSocketManager = new WebSocketManager({ name: "hpserver" }, this.onClientConnected.bind(this), this.onRequest.bind(this));
         this.presetManager = new PresetManager(this.onCurrentPresetChanged.bind(this), this.onPresetListChanged.bind(this));
         // this.presetManager.setCurrentPreset(preset);
-        this.presetManager.resetPresets();
+        // this.presetManager.resetPresets();
         this.controlPanel = new ControlPanel(this.onControlPanelChanged.bind(this));
         this.relayManager = new RelayManager(this.onRelaysStateChanged.bind(this));
         // setInterval(this.onSecondChange.bind(this), 1000);
