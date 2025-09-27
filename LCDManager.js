@@ -71,8 +71,8 @@ export class LCDManager {
         }
     }
 
-    printTimestamp(timestamp = Date.now()) {
-        const date = new Date(timestamp * 1000);
+    printTimestamp(timestamp = Date.now(), offset = -3) {
+        const date = new Date(timestamp * 1000 + (offset * 3600 * 1000));
 
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -90,7 +90,7 @@ export class LCDManager {
     }
 
     printBoolean(val) {
-        return val ? 'ON' : 'OFF';
+        return val ? 'ON'.padStart(3, ' ') : 'OFF';
     }
 
     printRelays({
