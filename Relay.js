@@ -12,7 +12,7 @@ export class Relay {
         this.label = label;
 
         this.digital = new Digital(pin, Digital.Output);
-        this.digital.write(!this.isOn);
+        this.digital.write(this.isOn);
     }
 
     on() {
@@ -20,7 +20,7 @@ export class Relay {
             return false;
         }
         this.isOn = true;
-        this.digital.write(!this.isOn);
+        this.digital.write(this.isOn);
         return true;
     }
 
@@ -29,7 +29,7 @@ export class Relay {
             return false;
         }
         this.isOn = false;
-        this.digital.write(!this.isOn);
+        this.digital.write(this.isOn);
         return true;
     }
 
