@@ -1,0 +1,11 @@
+{
+  "appId": "com.hpclient.app",
+  "appName": "hpclient",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

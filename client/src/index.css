@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Убирает кольцо фокуса для переключателей Flowbite */
+button[role="switch"]:focus,
+button[role="switch"].group:focus,
+button[role="switch"].group:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button[role="switch"].group:focus div[data-testid="flowbite-toggleswitch-toggle"],
+button[role="switch"].group:focus-visible div[data-testid="flowbite-toggleswitch-toggle"] {
+  box-shadow: none !important;
+}
+
+.animation-duration-7 {
+  animation-duration: 5000ms;
+}
+
+.dots {
+  width: 11px;
+  height: 2px;
+  background: radial-gradient(circle closest-side, #282828 90%,#0000) 0 0/33% 100% space;
+  clip-path: inset(0 100% 0 0);
+  animation: dots-e3xtdg 2.0999999999999996s steps(4) infinite;
+  display: inline-block;
+}
+
+@keyframes dots-e3xtdg {
+  to {
+    clip-path: inset(0 -34% 0 0);
+  }
+}
