@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "install:all": "npm --prefix server install && npm --prefix client install --legacy-peer-deps",
-    "start": "npm run start:server & npm run start:client",
+    "start": "npm run start:client & npm run start:server",
     "start:client": "npm --prefix client start",
     "start:server": "npm --prefix server start"
   },
