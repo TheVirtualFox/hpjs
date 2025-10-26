@@ -33,19 +33,22 @@ if [ -f "package.json" ]; then
   npm run install:all
 fi
 
+  echo "📦 сборка клиента..."
+  npm run start:client
+
 # 5. Запуск приложения через PM2
 echo "▶️ Запуск приложения $APP_NAME..."
 pm2 start "$ENTRY_FILE" --name "$APP_NAME"
 
 # 6. Настройка автозапуска
 #echo "🔧 Настраиваю автозапуск..."
-#sudo pm2 startup systemd -u "$USER_NAME" --hp "/home/$USER_NAME"
+sudo pm2 startup systemd -u "$USER_NAME" --hp "/home/$USER_NAME"
 
 # 7. Сохранение текущего списка процессов PM2
-#pm2 save
+pm2 save
 
 # 8. Проверка статуса
-#pm2 list
+pm2 list
 
 echo "✅ Готово! Приложение $APP_NAME теперь:"
 echo "   • Запускается при старте системы"
