@@ -66,11 +66,17 @@ export class DBManager {
         this.db.prepare("DELETE FROM presets WHERE id = ?").run(id);
     }
 
+    deactivatePreset() {
+        this.db.prepare("UPDATE presets SET isActive = 0").run();
+    }
+
     /** Активировать пресет */
     activatePreset(id, timestamp) {
         this.db.prepare("UPDATE presets SET isActive = 0").run();
         this.db.prepare("UPDATE presets SET isActive = 1, timestamp = ? WHERE id = ?").run(timestamp, id);
     }
+
+
 
     /** Сбросить всё */
     resetPresets() {

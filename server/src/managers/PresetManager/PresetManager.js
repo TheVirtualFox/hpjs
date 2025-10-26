@@ -30,7 +30,7 @@ export class PresetManager {
         if (isActivating) {
             this.db.activatePreset(id, timestamp);
         } else {
-            this.db.prepare("UPDATE presets SET isActive = 0").run();
+            this.db.deactivatePreset();
         }
 
         const newPreset = isActivating ? this.db.getPreset(id) : null;

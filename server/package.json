@@ -10,6 +10,7 @@
   "dependencies": {
     "better-sqlite3": "^12.4.1",
     "express": "^5.1.0",
+    "hpclient": "file:..",
     "onoff": "^6.0.3",
     "path": "^0.12.7",
     "url": "^0.11.4",
