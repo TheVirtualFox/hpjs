@@ -3,10 +3,10 @@
 # Orange Pi Node.js Service Setup
 # ===============================
 
-APP_NAME="myapp"                      # имя твоего приложения в PM2
-APP_PATH="/home/orangepi/project"     # путь к папке проекта
+APP_NAME="hpjs"                      # имя твоего приложения в PM2
+APP_PATH="/home/mycodouser/hpjs"     # путь к папке проекта
 ENTRY_FILE="server/src/index.js"      # точка входа в Node
-USER_NAME="orangepi"                  # пользователь системы (или root)
+USER_NAME="mycodouser"                  # пользователь системы (или root)
 
 echo "🚀 Настройка Node.js-сервиса ($APP_NAME)..."
 
@@ -30,7 +30,7 @@ cd "$APP_PATH" || { echo "❌ Ошибка: нет директории $APP_PAT
 # 4. Установка зависимостей (если нужно)
 if [ -f "package.json" ]; then
   echo "📦 Проверка зависимостей..."
-  npm install --omit=dev
+  npm run install:all
 fi
 
 # 5. Запуск приложения через PM2
@@ -38,14 +38,14 @@ echo "▶️ Запуск приложения $APP_NAME..."
 pm2 start "$ENTRY_FILE" --name "$APP_NAME"
 
 # 6. Настройка автозапуска
-echo "🔧 Настраиваю автозапуск..."
-sudo pm2 startup systemd -u "$USER_NAME" --hp "/home/$USER_NAME"
+#echo "🔧 Настраиваю автозапуск..."
+#sudo pm2 startup systemd -u "$USER_NAME" --hp "/home/$USER_NAME"
 
 # 7. Сохранение текущего списка процессов PM2
-pm2 save
+#pm2 save
 
 # 8. Проверка статуса
-pm2 list
+#pm2 list
 
 echo "✅ Готово! Приложение $APP_NAME теперь:"
 echo "   • Запускается при старте системы"
