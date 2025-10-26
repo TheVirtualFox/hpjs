@@ -1,4 +1,4 @@
-import { Relay } from './Relay';
+import { Relay } from './Relay.js';
 
 export class RelayManager {
     pumpRelay = null;
@@ -17,10 +17,10 @@ export class RelayManager {
     }
 
     onPresetControl(secondsOfDay, currentPreset) {
-        const pump = currentPreset?.pump.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const light = currentPreset?.light.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const air = currentPreset?.air.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const fan = currentPreset?.fan.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
+        const pump = currentPreset?.pump?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
+        const light = currentPreset?.light?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
+        const air = currentPreset?.air?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
+        const fan = currentPreset?.fan?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
 
         this.setState({ pump, light, air, fan });
     }

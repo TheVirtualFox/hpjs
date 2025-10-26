@@ -1,210 +1,5 @@
-import { Iterator, File, } from "file";
-import config from "mc/config";
-
-
-/*
-
-
-class FileManager {
-    root = null;
-    constructor() {
-        this.root = config.file.root;
-
-        получить список пресетов
-        активный пресетов
-        дата включения пресета
-        пресет по id
-    }
-
-
-
-    exists(fileName) {
-        return File.exists(this.root + fileName);
-    }
-
-    saveJSON(fileName, f) {
-        const file = new File(this.root + fileName, true);
-        file.write(JSON.stringify(f));
-        file.close();
-    }
-
-    getFile(fileName) {
-        File.exists(this.root + fileName);
-        const file = new File(this.root + fileName);
-        const string = file.read(String);
-        file.close();
-        return string;
-    }
-
-    getJSON(fileName) {
-        // File.exists(this.root + fileName);
-        // const file = new File(this.root + fileName);
-        // getFile(fileName);
-        return JSON.parse(this.getFile(fileName));
-    }
-
-    deleteFile(fileName) {
-        File.delete(this.root + fileName);
-    }
-}
-
-export class PresetManager {
-    //
-    currentPreset = null;
-    onCurrentPresetChanged = null;
-    onPresetListChanged = null;
-
-    presetsList = [];
-    fileManager = null;
-
-    constructor(onCurrentPresetChanged, onPresetListChanged) {
-        this.fileManager = new FileManager();
-        this.onCurrentPresetChanged = onCurrentPresetChanged;
-        this.onPresetListChanged = onPresetListChanged;
-
-    }
-
-    getCurrentPresetId() {
-        const presetsList = this.getPresetsList();
-        const currentPreset = presetsList.find((p) => p.isActive);
-        return currentPreset?.id || null;
-    }
-
-    getCurrentPreset() {
-        const presetsList = this.getPresetsList();
-        const currentPreset = presetsList.find((p) => p.isActive);
-        return this.fileManager.getJSON(`${currentPreset.id}.json`);
-    }
-
-    setPresetList(presetsList) {
-        this.fileManager.saveJSON("presetList.json", presetsList);
-        // this.presetsList = presetsList;
-        this.onPresetListChanged(presetsList);
-    }
-
-    setCurrentPreset({ id }) { // переименовать в toggle и добавить setCurrentPreset
-        if (this.getCurrentPresetId() === id) {
-            const currentPreset = null;
-            const presetList = this.getPresetsList().map((p) => {
-                p.isActive = false;
-                delete p.activeTimestamp;
-                return p;
-            });
-            this.setPresetList(presetList);
-            this.onCurrentPresetChanged(currentPreset);
-        } else {
-            const presetList = this.getPresetsList().map((p) => {
-                if (p?.id === id) {
-                    p.isActive = true;
-                    p.activeTimestamp = this.getTimestamp();
-                } else {
-                    p.isActive = false;
-                    delete p.activeTimestamp;
-                }
-
-                return p;
-            });
-            this.setPresetList(presetList);
-            const currentPreset = this.fileManager.getJSON(`${id}.json`);
-
-            this.onCurrentPresetChanged(currentPreset);
-        }
-    }
-
-    savePreset(preset) { // сохранить или обновить
-        // проверить что есть id
-        const savedPreset = this.getPresetsList().find(({ id }) => id === preset?.id);
-        const isNew = !savedPreset;
-
-        if (isNew) {
-            preset.timestamp = this.getTimestamp();
-            this.fileManager.saveJSON(preset.id, preset);
-            const presetList = this.getPresetsList();
-            presetList.push({
-                id: preset.id,
-                label: preset.label,
-                timestamp: preset.timestamp,
-                isActive: false,
-            });
-            this.setPresetList(presetList);
-        } else {
-            this.fileManager.deleteFile(`${preset.id}.json`);
-            this.fileManager.saveJSON(`${preset.id}.json`, preset);
-            const updated = this.getPresetsList().map((p) => p.id === preset?.id ? {
-                id: preset.id,
-                label: preset.label,
-                timestamp: p.timestamp,
-                isActive: p.isActive,
-            } : p);
-            this.setPresetList(updated);
-            if (this.getCurrentPresetId() === savedPreset?.id) {
-                // this.currentPreset = preset;
-                // this.currentPreset.activeTimestamp = this.getTimestamp();
-                this.onCurrentPresetChanged(preset);
-            }
-        }
-    }
-
-    getPresetsList() {
-        if (this.fileManager.exists("presetList.json")) {
-            return this.fileManager.getJSON('presetList.json');
-        }
-
-        return [];
-        // return this.presetsList.map(({ label, timestamp, id }) => ({ isActive: id === this.getCurrentPreset()?.id, label, timestamp, id }));
-    }
-
-    getTimestamp() {
-        const d = new Date();
-        return Math.floor(d.getTime() / 1000);
-    }
-
-    getPreset({ id }) {
-        return this.fileManager.getJSON(`${id}.json`);
-    }
-
-    deletePreset({ id }) {
-        // проверка на удаление current
-        const presetList = this.getPresetsList().filter((p) => {
-            return p.id !== id;
-        });
-        this.setPresetList(presetList);
-        this.fileManager.deleteFile(`${id}.json`);
-
-
-        if (this.getCurrentPresetId() === id) {
-            this.onCurrentPresetChanged(null);
-        }
-
-    }
-
-    // setCurrentPreset(presetId) {
-    //     ;
-    // }
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import fs from 'fs';
+import path from 'path';
 
 const FILES = {
     presetList: "presetList.json",
@@ -215,68 +10,94 @@ export class FileManager {
     root = null;
 
     constructor() {
-        this.root = config.file.root;
+        this.root = path.resolve('./data');  // Путь к каталогу с файлами (можно настроить)
     }
 
-    exists(fileName) {
-        return File.exists(this.root + fileName);
-    }
-
-    saveJSON(fileName, data) {
-
-
-
-
-
-
-        this.deleteFile(fileName);
-        const file = new File(this.root + fileName, true);
-        file.write(JSON.stringify(data));
-        file.close();
-    }
-
-
-    getFile(fileName) {
-        const path = this.root + fileName;
-        if (!File.exists(path)) return null;
-        const file = new File(path);
-        const content = file.read(String);
-        file.close();
-        return content;
-    }
-
-    getJSON(fileName) {
+    async exists(fileName) {
         try {
-            const text = this.getFile(fileName);
-            trace(`DEBUG: reading JSON file "${fileName}", content:\n${text}\n`);
+            await fs.promises.access(path.join(this.root, fileName));
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async saveJSON(fileName, data) {
+        await this.deleteFile(fileName);
+        const filePath = path.join(this.root, fileName);
+        await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2));
+    }
+
+    async getFile(fileName) {
+        const filePath = path.join(this.root, fileName);
+        if (!await this.exists(fileName)) return null;
+        return await fs.promises.readFile(filePath, 'utf-8');
+    }
+
+    async getFileOrCreate(fileName, defaultContent = '') {
+        const filePath = path.join(this.root, fileName);
+
+        // Проверяем, существует ли файл
+        try {
+            await fs.promises.access(filePath, fs.constants.F_OK);
+        } catch {
+            // Если не существует — создаём с дефолтным содержимым
+            await fs.promises.writeFile(filePath, defaultContent, 'utf-8');
+        }
+
+        // Читаем и возвращаем содержимое
+        return await fs.promises.readFile(filePath, 'utf-8');
+    }
+
+    getFileOrCreateSync(fileName, defaultContent = '') {
+        const filePath = path.join(this.root, fileName);
+
+        // Проверяем, существует ли файл
+        if (!fs.existsSync(filePath)) {
+            // Если не существует — создаём с дефолтным содержимым
+            fs.writeFileSync(filePath, defaultContent, 'utf-8');
+        }
+
+        // Читаем и возвращаем содержимое
+        return fs.readFileSync(filePath, 'utf-8');
+    }
+
+    async getJSON(fileName) {
+        try {
+            const text = await this.getFile(fileName);
+            console.debug(`DEBUG: reading JSON file "${fileName}", content:\n${text}\n`);
             return text ? JSON.parse(text) : null;
         } catch (e) {
-            trace(`Ошибка чтения JSON из "${fileName}": ${e}\n`);
+            console.error(`Ошибка чтения JSON из "${fileName}": ${e}`);
             return null;
         }
     }
 
-    deleteFile(fileName) {
-        const path = this.root + fileName;
-        if (File.exists(path)) {
-            File.delete(path);
+    async deleteFile(fileName) {
+        const filePath = path.join(this.root, fileName);
+        if (await this.exists(fileName)) {
+            await fs.promises.unlink(filePath);
         }
     }
 
-    listPresetFiles() {
+    async listPresetFiles() {
         const listFiles = [];
-        for (const item of (new Iterator(this.root))) {
-            if (undefined === item.length) {
-                trace(`${item.name.padEnd(32)} directory\n`);
-            } else {
-                trace(`${item.name.padEnd(32)} file          ${item.length} bytes\n`);
-                item.name.endsWith('.json') && listFiles.push(item.name);
+        const files = await fs.promises.readdir(this.root);
+
+        for (const file of files) {
+            const filePath = path.join(this.root, file);
+            const stats = await fs.promises.stat(filePath);
+            if (stats.isFile() && file.endsWith('.json')) {
+                console.log(`${file.padEnd(32)} file          ${stats.size} bytes`);
+                listFiles.push(file);
+            } else if (stats.isDirectory()) {
+                console.log(`${file.padEnd(32)} directory`);
             }
         }
+
         return listFiles;
     }
 }
-
 
 export class PresetManager {
     onCurrentPresetChanged = null;
@@ -284,17 +105,17 @@ export class PresetManager {
     fileManager = null;
 
     _cachedCurrentPreset = null;
-    _cachedPresetList = null; // 🔹 Новый кеш для списка пресетов
+    _cachedPresetList = null;
 
     constructor(onCurrentPresetChanged, onPresetListChanged) {
         this.fileManager = new FileManager();
         this.onCurrentPresetChanged = onCurrentPresetChanged;
         this.onPresetListChanged = onPresetListChanged;
 
-        // 🔹 Загрузка списка пресетов в кеш при создании
-        this._cachedPresetList = this.fileManager.getJSON(FILES.presetList) || [];
+        // Загрузка списка пресетов в кеш
+        this._cachedPresetList = JSON.parse(this.fileManager.getFileOrCreateSync(FILES.presetList, '[]'));
 
-        // 🔹 Устанавливаем текущий пресет, если есть активный
+        // Устанавливаем текущий пресет
         const activeId = this.getCurrentPresetId();
         if (activeId) {
             const activePreset = this.fileManager.getJSON(FILES.presetFile(activeId));
@@ -306,9 +127,9 @@ export class PresetManager {
         return this._cachedPresetList;
     }
 
-    updatePresetList(list) {
-        this._cachedPresetList = list; // 🔹 Обновление кеша
-        this.fileManager.saveJSON(FILES.presetList, list);
+    async updatePresetList(list) {
+        this._cachedPresetList = list;
+        await this.fileManager.saveJSON(FILES.presetList, list);
         this.onPresetListChanged?.(list);
 
         const activeId = list.find(p => p.isActive)?.id;
@@ -318,8 +139,8 @@ export class PresetManager {
     }
 
     getCurrentPresetId() {
-        const list = this.getPresetsList();
-        return list.find(p => p.isActive)?.id || null;
+        const list = this.getPresetsList()
+        return list?.find(p => p.isActive)?.id || null;
     }
 
     getCurrentPreset() {
@@ -331,7 +152,7 @@ export class PresetManager {
         this.onCurrentPresetChanged?.(preset);
     }
 
-    togglePreset({ id }, timestamp) {
+    async togglePreset({ id }, timestamp) {
         const currentId = this.getCurrentPresetId();
         const isActivating = currentId !== id;
 
@@ -350,10 +171,10 @@ export class PresetManager {
             return p;
         });
 
-        this.updatePresetList(updatedList);
+        await this.updatePresetList(updatedList);
 
         const activePreset = isActivating
-            ? this.fileManager.getJSON(FILES.presetFile(id))
+            ? await this.fileManager.getJSON(FILES.presetFile(id))
             : null;
 
         this.setCurrentPreset(activePreset);
@@ -361,7 +182,7 @@ export class PresetManager {
         return isActivating;
     }
 
-    savePreset(preset, timestamp) {
+    async savePreset(preset, timestamp) {
         if (!preset?.id) return;
 
         const list = this.getPresetsList();
@@ -370,7 +191,7 @@ export class PresetManager {
 
         preset.timestamp = isNew ? timestamp : list[index].timestamp;
 
-        this.fileManager.saveJSON(FILES.presetFile(preset.id), preset);
+        await this.fileManager.saveJSON(FILES.presetFile(preset.id), preset);
 
         if (isNew) {
             list.push({
@@ -383,34 +204,35 @@ export class PresetManager {
             list[index].label = preset.label;
         }
 
-        this.updatePresetList(list);
+        await this.updatePresetList(list);
 
         if (this.getCurrentPresetId() === preset.id) {
             this.setCurrentPreset(preset);
         }
     }
 
-    deletePreset({ id }) {
+    async deletePreset({ id }) {
         const currentId = this.getCurrentPresetId();
         const updatedList = this.getPresetsList().filter(p => p.id !== id);
 
-        this.updatePresetList(updatedList);
-        this.fileManager.deleteFile(FILES.presetFile(id));
+        await this.updatePresetList(updatedList);
+        await this.fileManager.deleteFile(FILES.presetFile(id));
 
         if (currentId === id) {
             this.setCurrentPreset(null);
         }
     }
 
-    getPreset({ id }) {
-        return this.fileManager.getJSON(FILES.presetFile(id));
+    async getPreset({ id }) {
+        return await this.fileManager.getJSON(FILES.presetFile(id));
     }
 
-    resetPresets() {
-        const allPresetFiles = this.fileManager.listPresetFiles();
-        allPresetFiles.forEach((name) => this.fileManager.deleteFile(name));
-        this.updatePresetList([]);
+    async resetPresets() {
+        const allPresetFiles = await this.fileManager.listPresetFiles();
+        for (const name of allPresetFiles) {
+            await this.fileManager.deleteFile(name);
+        }
+        await this.updatePresetList([]);
         this.setCurrentPreset(null);
     }
 }
-

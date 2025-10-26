@@ -1,10 +1,8 @@
-import { TimeManager } from "./TimeManager";
-import { ControlPanel } from "./ControlPanel";
-import { PresetManager } from "./PresetManager";
-import { RelayManager } from "./RelayManager";
-import { WebSocketManager } from "./WebSocketManager";
-import Timer from "timer";
-
+import { TimeManager } from "./TimeManager.js";
+import { ControlPanel } from "./ControlPanel.js";
+import { PresetManager } from "./PresetManager.js";
+import { RelayManager } from "./RelayManager.js";
+import {Server} from "./Server.js";
 
 const CLIENT_ACTIONS = {
 
@@ -43,11 +41,11 @@ export class HydroponicManager {
     presetManager = null;
     relayManager = null;
     timeManager = null;
-    webSocketManager = null;
+    server = null;
 
     constructor() {
         this.timeManager = new TimeManager(this.onTimestampChanged.bind(this));
-        this.webSocketManager = new WebSocketManager({ name: "hpserver" }, this.onClientConnected.bind(this), this.onRequest.bind(this));
+        this.server = new Server(this.onClientConnected.bind(this), this.onRequest.bind(this));
         this.presetManager = new PresetManager(this.onCurrentPresetChanged.bind(this), this.onPresetListChanged.bind(this));
         // this.presetManager.setCurrentPreset(preset);
         // this.presetManager.resetPresets();
@@ -55,7 +53,7 @@ export class HydroponicManager {
         this.relayManager = new RelayManager(this.onRelaysStateChanged.bind(this));
         // setInterval(this.onSecondChange.bind(this), 1000);
         const onSecondChange = this.onSecondChange.bind(this);
-        Timer.repeat(onSecondChange, 1000);
+        setInterval(onSecondChange, 1000);
     }
 
     onClientConnected(ws) {
@@ -74,19 +72,19 @@ export class HydroponicManager {
     }
 
     webSocketRequest(ws, message) {
-        ws.write(JSON.stringify(message));
+        ws.send(JSON.stringify(message));
     }
     webSocketBroadcast(message) {
-        this.webSocketManager.broadcast(JSON.stringify(message));
+        this.server.getWebSocketManager().broadcast(JSON.stringify(message));
     }
 
-    onRequest({ ws, message }) {
+    async onRequest({ ws, message }) {
         const { action, requestId, payload } = message;
 
         switch (action) {
             case CLIENT_ACTIONS.SAVE_PRESET_REQ:
                 // const payload = {id: '', title: "", desc: "", pump: [], light: [], air: [], fan: [] };
-                this.presetManager.savePreset(payload, this.timeManager.getTimestamp());
+                await this.presetManager.savePreset(payload, this.timeManager.getTimestamp());
                 this.webSocketRequest(ws, {
                     action: SERVER_ACTIONS.SAVE_PRESET_RES,
                     requestId,
@@ -95,7 +93,7 @@ export class HydroponicManager {
                 break;
             case CLIENT_ACTIONS.SET_CURRENT_PRESET_REQ:
                 // const payload = {id: ''};
-                this.presetManager.togglePreset(payload, this.timeManager.getTimestamp());
+                await this.presetManager.togglePreset(payload, this.timeManager.getTimestamp());
                 this.webSocketRequest(ws, {
                     action: SERVER_ACTIONS.SET_CURRENT_PRESET_RES,
                     requestId,
@@ -103,7 +101,7 @@ export class HydroponicManager {
                 });
                 break;
             case CLIENT_ACTIONS.DELETE_PRESET_REQ:
-                this.presetManager.deletePreset(payload);
+                await this.presetManager.deletePreset(payload);
                 this.webSocketRequest(ws, {
                     action: SERVER_ACTIONS.DELETE_PRESET_RES,
                     requestId,
@@ -133,14 +131,14 @@ export class HydroponicManager {
                 this.webSocketRequest(ws, { // ?
                     action: SERVER_ACTIONS.GET_PRESET_RES,
                     requestId,
-                    payload: this.presetManager.getPreset(payload)
+                    payload: await this.presetManager.getPreset(payload)
                 });
                 break;
             case CLIENT_ACTIONS.DELETE_ALL_PRESETS_REQ:
                 this.webSocketRequest(ws, { // ?
                     action: SERVER_ACTIONS.DELETE_ALL_PRESETS_RES,
                     requestId,
-                    payload: this.presetManager.resetPresets(payload)
+                    payload: await this.presetManager.resetPresets(payload)
                 });
                 break;
             default:
