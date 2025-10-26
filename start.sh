@@ -38,17 +38,17 @@ fi
 
 # 5. Запуск приложения через PM2
 echo "▶️ Запуск приложения $APP_NAME..."
-pm2 start "$ENTRY_FILE" --name "$APP_NAME"
+sudo pm2 start "$ENTRY_FILE" --name "$APP_NAME"
 
 # 6. Настройка автозапуска
 #echo "🔧 Настраиваю автозапуск..."
 sudo pm2 startup systemd -u "$USER_NAME" --hp "/home/$USER_NAME"
 
 # 7. Сохранение текущего списка процессов PM2
-pm2 save
+sudo pm2 save
 
 # 8. Проверка статуса
-pm2 list
+sudo pm2 list
 
 echo "✅ Готово! Приложение $APP_NAME теперь:"
 echo "   • Запускается при старте системы"
