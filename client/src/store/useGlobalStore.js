@@ -86,6 +86,7 @@ export const activeTimestampSelector = (state) => {
 export const getLocalTimestamp = (utcTimestamp) => {
     const newDate = new Date();
     return utcTimestamp + (newDate.getTimezoneOffset() * 60);
+    // return utcTimestamp + (0 * 60);
 };
 
 export const secondsOfDayToHMS = (secondsOfDay) => {

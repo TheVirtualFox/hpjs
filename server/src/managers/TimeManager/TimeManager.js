@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 
 export class TimeManager { // DS3231
     onTimestampChanged = null;
@@ -6,21 +7,25 @@ export class TimeManager { // DS3231
     }
 
     setTimestamp(timestamp) {
-        // Преобразуем timestamp в дату UTC
-        const date = new Date(timestamp * 1000);
+        try {
+            // 1. Преобразуем timestamp в формат YYYY-MM-DD HH:MM:SS
+            const date = new Date(timestamp * 1000);
+            const formatted = date.toISOString().replace("T", " ").split(".")[0];
+            console.log(`Setting system time to: ${formatted}`);
+            // 2. Устанавливаем системное время
+            execSync(`sudo date -s "${formatted}"`, { stdio: "inherit" });
+            // 3. Записываем это время в RTC1
+            execSync("sudo hwclock -w -f /dev/rtc1", { stdio: "inherit" });
+            // 4. Синхронизируем системное время снова из RTC1
+            execSync("sudo hwclock -s -f /dev/rtc1", { stdio: "inherit" });
 
-        this.setTime({
-            seconds: date.getUTCSeconds(),
-            minutes: date.getUTCMinutes(),
-            hours: date.getUTCHours(),
-            day: date.getUTCDate(),
-            month: date.getUTCMonth() + 1,
-            year: date.getUTCFullYear()
-        });
-        this.onTimestampChanged(timestamp);
-    }
+            console.log("✅ RTC1 and system time synchronized successfully.");
+            this.onTimestampChanged(timestamp);
+        } catch (err) {
+            console.error("❌ Failed to set RTC/system time:", err.message);
+        }
 
-    setTime({ seconds, minutes, hours, day, month, year }) {
+
     }
 
     getTime() {
