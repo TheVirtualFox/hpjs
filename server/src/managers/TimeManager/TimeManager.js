@@ -58,8 +58,8 @@ export class TimeManager { // DS3231
 
     getSecondsOfDay() {
         const d = new Date();
-        // const {hours, minutes, seconds} = this.getTime();
-        return d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds();
+        const {seconds, minutes, hours, day, month, year} = this.getTime();
+        return hours * 3600 + minutes * 60 + seconds;
     }
 
     getTimestamp() {
