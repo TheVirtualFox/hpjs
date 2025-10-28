@@ -30,7 +30,6 @@ export class RelayManager {
     }
 
     onTimeChange(secondsOfDay, currentPreset) {
-        console.log('secondsOfDay', secondsOfDay);
         this.onPresetControl(secondsOfDay, currentPreset);
     }
 

@@ -34,29 +34,18 @@ const TimeForm = () => {
 
     const onSave = async ({h,m,s}) => {
         const d = new Date();
-
-        //
-        //
-        // d.setHours(h);
-        // d.setMinutes(m);
-        // d.setSeconds(s);
-        // d.setMilliseconds(0);
-
+        d.setHours(h,m,s,0);
         // const utcSeconds = Math.floor((new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), h,m,s,0 ))).getTime() / 1000);
-        const utcSeconds = Math.floor(d.getTime() / 1000);
+        // const utcSeconds = Math.floor(d.getTime() / 1000);
         await ws.sendPromiseMessage({
             action: 'SET_TIMESTAMP_REQ',
-            payload: {timestamp: utcSeconds }
+            payload: {timestamp: 777, isoDate: d.toISOString() }
         });
         setTime(useGlobalStore.getState().secondsOfDay);
         navigate(back);
     };
 
     const onSetSystemTime = async () => {
-        // const d = new Date();
-        // const h = d.getHours();
-        // const m = d.getMinutes();
-        // const s = d.getSeconds();
         await onSave(dateToHMS());
     }
 

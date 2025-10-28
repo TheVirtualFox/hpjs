@@ -139,8 +139,6 @@ export const fetchPreset = async (id) => {
     return message;
 }
 
-
-
 const getPreset = () => {
     const {label, pump, light,air,fan, desc,id} = get();
     const cleanSchedule = (schedule) => {
@@ -154,6 +152,7 @@ const getPreset = () => {
         fan:  cleanSchedule(fan),
         id,
         desc,
+        timeOffset: new Date().getTimezoneOffset(),
     };
 };
 
