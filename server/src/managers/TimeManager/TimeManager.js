@@ -65,7 +65,8 @@ export class TimeManager { // DS3231
         const {seconds, minutes, hours, day, month, year} = this.getTime();
 
         // JavaScript Date: месяц от 0 до 11, поэтому month - 1
-        const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+        // const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+        const date = new Date(year, month - 1, day, hours, minutes, seconds);
         return Math.floor(date.getTime() / 1000); // Возврат timestamp в секундах
     }
 }
