@@ -118,8 +118,8 @@ export class HydroponicManager {
                 });
                 break;
             case CLIENT_ACTIONS.SET_TIMESTAMP_REQ:
-                const { timestamp } = payload;
-                this.timeManager.setTimestamp(timestamp);
+                const { isoDate } = payload;
+                this.timeManager.setTimestamp(isoDate);
 
                 this.webSocketRequest(ws, { // ?
                     action: SERVER_ACTIONS.SET_TIMESTAMP_RES,

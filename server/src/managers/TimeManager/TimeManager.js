@@ -9,23 +9,22 @@ export class TimeManager { // DS3231
 
     /**
      * Синхронизирует RTC1, RTC0 и системное время
-     * @param {number} [timestamp] - Unix timestamp в секундах. Если не указан, берётся текущее время.
+     * @param {string} [isoDate] - Unix timestamp в секундах. Если не указан, берётся текущее время.
      */
 
-    setTimestamp(timestamp) {
+    setTimestamp(isoDate) {
 
         try {
             let dateObj;
-            if (timestamp) {
-                dateObj = new Date(timestamp * 1000);
+            if (isoDate) {
+                dateObj = new Date(isoDate);
             } else {
                 dateObj = new Date();
-                timestamp = Math.floor(dateObj.getTime() / 1000);
             }
 
             // Формат YYYY-MM-DD HH:MM:SS
             const formatted = dateObj.toISOString().replace("T", " ").split(".")[0];
-            console.log(`⏰ Setting time: ${formatted} (Unix: ${timestamp})`);
+            console.log(`⏰ Setting time: ${formatted}`);
 
             // 1️⃣ Устанавливаем системное время по timestamp
             execSync(`sudo date -s "${formatted}"`, {stdio: "inherit"});
@@ -62,11 +61,11 @@ export class TimeManager { // DS3231
     }
 
     getTimestamp() {
-        const {seconds, minutes, hours, day, month, year} = this.getTime();
+        // const {seconds, minutes, hours, day, month, year} = this.getTime();
 
         // JavaScript Date: месяц от 0 до 11, поэтому month - 1
         // const date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-        const date = new Date(year, month - 1, day, hours, minutes, seconds);
+        const date = new Date();
         return Math.floor(date.getTime() / 1000); // Возврат timestamp в секундах
     }
 }
