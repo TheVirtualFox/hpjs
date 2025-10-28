@@ -52,7 +52,8 @@ const setSecondsOfDay = (secondsOfDay) => {
 
 export const setServerTimestamp = (serverTimestamp) => {
     const d = new Date(serverTimestamp * 1000);
-    const timestamp = HMSToSecondsOfDay(dateToHMS(new Date(d.getTime() + d.getTimezoneOffset() * 60_000)));
+    // const timestamp = HMSToSecondsOfDay(dateToHMS(new Date(d.getTime() + d.getTimezoneOffset() * 60_000)));
+    const timestamp = HMSToSecondsOfDay(dateToHMS(new Date(d.getTime())));
     set({serverTimestamp: timestamp });
     setSecondsOfDay(timestamp % 86400 + 1);
 };
@@ -85,8 +86,8 @@ export const activeTimestampSelector = (state) => {
 
 export const getLocalTimestamp = (utcTimestamp) => {
     const newDate = new Date();
-    return utcTimestamp + (newDate.getTimezoneOffset() * 60);
-    // return utcTimestamp + (0 * 60);
+    // return utcTimestamp + (newDate.getTimezoneOffset() * 60);
+    return utcTimestamp + (0 * 60);
 };
 
 export const secondsOfDayToHMS = (secondsOfDay) => {

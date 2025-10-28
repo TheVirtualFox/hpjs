@@ -44,8 +44,8 @@ export class TimeManager { // DS3231
     }
 
     getTime() {
-        const date = new Date();
-
+        const d = new Date();
+        const date = new Date(Date.UTC(d.getFullYear(), d.getMonth() - 1, d.getDay(), d.getHours(), d.getMinutes(), d.getSeconds()));
         return {
             seconds: date.getSeconds(),
             minutes: date.getMinutes(),

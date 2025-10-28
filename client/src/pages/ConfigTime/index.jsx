@@ -42,7 +42,8 @@ const TimeForm = () => {
         // d.setSeconds(s);
         // d.setMilliseconds(0);
 
-        const utcSeconds = Math.floor((new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), h,m,s,0 ))).getTime() / 1000);
+        // const utcSeconds = Math.floor((new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), h,m,s,0 ))).getTime() / 1000);
+        const utcSeconds = Math.floor(d.getTime() / 1000);
         await ws.sendPromiseMessage({
             action: 'SET_TIMESTAMP_REQ',
             payload: {timestamp: utcSeconds }

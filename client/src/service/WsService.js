@@ -24,9 +24,9 @@ export class WsService {
     }
 
     connect() {
-         this.ws = new WebSocket(`ws://${window.location.host}`);
+         // this.ws = new WebSocket(`ws://${window.location.host}`);
         // this.ws = new WebSocket("ws://192.168.4.1");
-        // this.ws = new WebSocket("ws://192.168.10.247:8080/");
+        this.ws = new WebSocket("ws://192.168.10.247:8080/");
 
         this.ws.onopen = () => {
             this.state = 'connected';
