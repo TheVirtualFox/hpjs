@@ -17,10 +17,14 @@ export class RelayManager {
     }
 
     onPresetControl(secondsOfDay, currentPreset) {
-        const pump = currentPreset?.pump?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const light = currentPreset?.light?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const air = currentPreset?.air?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
-        const fan = currentPreset?.fan?.some(({ on, off }) => secondsOfDay >= on && secondsOfDay <= off);
+        const some = ({ on, off }) => {
+            const timeOffset = Number((currentPreset?.timeOffset || 0) * 60);
+            return secondsOfDay >= on + timeOffset && secondsOfDay <= off + timeOffset;
+        }
+        const pump = currentPreset?.pump?.some(some);
+        const light = currentPreset?.light?.some(some);
+        const air = currentPreset?.air?.some(some);
+        const fan = currentPreset?.fan?.some(some);
 
         this.setState({ pump, light, air, fan });
     }
