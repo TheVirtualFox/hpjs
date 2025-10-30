@@ -1,0 +1,15 @@
+[Unit]
+Description=Synchronize external RTC (/dev/rtc1) to system clock
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=time-sync.target systemd-timedated.service
+
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/rtc-sync.sh
+RemainAfterExit=yes
+StandardOutput=journal
+
+[Install]
+WantedBy=sysinit.target

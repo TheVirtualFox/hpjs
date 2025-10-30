@@ -80,7 +80,7 @@ export const secondsOfDaySelector = (state) => state.secondsOfDay;
 
 export const activeTimestampSelector = (state) => {
     const id = state.currentPreset?.id;
-    return getLocalTimestamp(state.presetsList?.find((p) => p?.id === id)?.activeTimestamp);
+    return getLocalTimestamp(state.presetsList?.find((p) => p?.id === id)?.timestamp);
 };
 
 

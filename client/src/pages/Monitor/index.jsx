@@ -249,12 +249,14 @@ const CurrentPresetMonitor = () => {
                     {currentPreset.label}
                 </div>
 
-                <div className="flex gap-2 text-xs text-green-600 mb-2 items-end">
+                <div className="flex gap-2 text-xs text-green-600 mb-2 items-start">
                     <span className="text-gray-500">Дата включения пресета: </span>
-                    <span className="font-medium">
-                        {activeTimestamp && `${UTCTimestampToDateString(activeTimestamp)} дней`}
-                        {activeTimestamp && diffDays(activeTimestamp)}
-                    </span>
+                    <div className="font-medium">
+                        <div>{activeTimestamp && `${UTCTimestampToDateString(activeTimestamp)}`}</div>
+                        <div>
+                            {activeTimestamp && `дней ${diffDays(activeTimestamp)}`}
+                        </div>
+                    </div>
                 </div>
 
 
