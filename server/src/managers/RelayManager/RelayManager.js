@@ -17,10 +17,28 @@ export class RelayManager {
     }
 
     onPresetControl(secondsOfDay, currentPreset) {
+        // const some = ({ on, off }) => {
+        //     const timeOffset = Number((currentPreset?.timeOffset || 0) * 60);
+        //     const secOfDay = (secondsOfDay + timeOffset) % ;
+        //     return secondsOfDay >= (on + timeOffset) && secondsOfDay <= (off + timeOffset);
+        // }
+
         const some = ({ on, off }) => {
             const timeOffset = Number((currentPreset?.timeOffset || 0) * 60);
-            return secondsOfDay >= on + timeOffset && secondsOfDay <= off + timeOffset;
-        }
+            const offset = Number(timeOffset * 60);
+            const secOfDay = (secondsOfDay + offset + 86400) % 86400;
+
+            const onTime = (on + offset + 86400) % 86400;
+            const offTime = (off + offset + 86400) % 86400;
+
+            if (onTime <= offTime) {
+                return secOfDay >= onTime && secOfDay <= offTime;
+            } else {
+                return secOfDay >= onTime || secOfDay <= offTime;
+            }
+        };
+
+
         const pump = currentPreset?.pump?.some(some);
         const light = currentPreset?.light?.some(some);
         const air = currentPreset?.air?.some(some);
