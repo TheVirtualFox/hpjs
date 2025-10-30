@@ -24,20 +24,21 @@ export class RelayManager {
         // }
 
         const some = ({ on, off }) => {
+            // timeOffset в часах → переводим в секунды
             const timeOffset = Number((currentPreset?.timeOffset || 0) * 60);
-            const offset = Number(timeOffset * 60);
-            const secOfDay = (secondsOfDay + offset + 86400) % 86400;
 
-            const onTime = (on + offset + 86400) % 86400;
-            const offTime = (off + offset + 86400) % 86400;
 
-            if (onTime <= offTime) {
-                return secOfDay >= onTime && secOfDay <= offTime;
+            // Переводим локальные on/off в UTC
+            const onUtc = (on - timeOffset + 86400) % 86400;
+            const offUtc = (off - timeOffset + 86400) % 86400;
+
+            if (onUtc <= offUtc) {
+                return secondsOfDay >= onUtc && secondsOfDay <= offUtc;
             } else {
-                return secOfDay >= onTime || secOfDay <= offTime;
+                // если интервал через полночь
+                return secondsOfDay >= onUtc || secondsOfDay <= offUtc;
             }
         };
-
 
         const pump = currentPreset?.pump?.some(some);
         const light = currentPreset?.light?.some(some);
