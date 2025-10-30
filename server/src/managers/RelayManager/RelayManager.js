@@ -24,26 +24,29 @@ export class RelayManager {
         // }
 
         const some = ({ on, off }) => {
-            // timeOffset в часах → переводим в секунды
-            const timeOffset = Number((currentPreset?.timeOffset || 0) * 60);
-
+            // timeOffset в минутах → переводим в секунды
+            const offsetSec = Number((currentPreset?.timeOffset || 0) * 60);
 
             // Переводим локальные on/off в UTC
-            const onUtc = (on - timeOffset + 86400) % 86400;
-            const offUtc = (off - timeOffset + 86400) % 86400;
+            // Если offset = +180 (значит UTC опережает локальное на 3 часа),
+            // то UTC = local + 3ч
+            const onUtc = (on + offsetSec + 86400) % 86400;
+            const offUtc = (off + offsetSec + 86400) % 86400;
+
+            const nowUtc = secondsOfDay % 86400;
 
             if (onUtc <= offUtc) {
-                return secondsOfDay >= onUtc && secondsOfDay <= offUtc;
+                return nowUtc >= onUtc && nowUtc <= offUtc;
             } else {
-                // если интервал через полночь
-                return secondsOfDay >= onUtc || secondsOfDay <= offUtc;
+                // если интервал пересекает полночь
+                return nowUtc >= onUtc || nowUtc <= offUtc;
             }
         };
 
-        const pump = currentPreset?.pump?.some(some);
+        const pump  = currentPreset?.pump?.some(some);
         const light = currentPreset?.light?.some(some);
-        const air = currentPreset?.air?.some(some);
-        const fan = currentPreset?.fan?.some(some);
+        const air   = currentPreset?.air?.some(some);
+        const fan   = currentPreset?.fan?.some(some);
 
         this.setState({ pump, light, air, fan });
     }
