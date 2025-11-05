@@ -3,6 +3,7 @@ import { ControlPanelManager } from "../ControlPanelManager/ControlPanelManager.
 import { PresetManager } from "../PresetManager/PresetManager.js";
 import { RelayManager } from "../RelayManager/RelayManager.js";
 import {ServerManager} from "../ServerManager/ServerManager.js";
+import {SensorManager} from "../SensorManager/SensorManager.js";
 
 const CLIENT_ACTIONS = {
 
@@ -34,7 +35,8 @@ const SERVER_ACTIONS = {
     TIMESTAMP_CHANGED: 'TIMESTAMP_CHANGED',
     RELAYS_STATE_UPDATED: 'RELAYS_STATE_UPDATED',
     MINUTE_UPDATE: 'MINUTE_UPDATE',
-    CLIENT_CONNECTED: 'CLIENT_CONNECTED'
+    CLIENT_CONNECTED: 'CLIENT_CONNECTED',
+    SENSOR_STATE_UPDATED: 'SENSOR_STATE_UPDATED',
 }
 
 export class HydroponicManager {
@@ -51,6 +53,8 @@ export class HydroponicManager {
         // this.presetManager.resetPresets();
         this.controlPanel = new ControlPanelManager(this.onControlPanelChanged.bind(this));
         this.relayManager = new RelayManager(this.onRelaysStateChanged.bind(this));
+
+        this.sensorManager = new SensorManager(this.onSensorStateChanged.bind(this));
         // setInterval(this.onSecondChange.bind(this), 1000);
         const onSecondChange = this.onSecondChange.bind(this);
         setInterval(onSecondChange, 1000);
@@ -167,6 +171,8 @@ export class HydroponicManager {
         });
     }
 
+
+
     //  при изменения состояния панели управления
     onControlPanelChanged(controlPanel) {
         const { isManualControl, ...state } = controlPanel;
@@ -218,5 +224,13 @@ export class HydroponicManager {
             this.onMinuteChanged(this.timeManager.getTimestamp());
         }
         // this.timeManager.addSecondsOfDay();
+    }
+
+
+    onSensorStateChanged(state) {
+        this.webSocketBroadcast({
+            action: SERVER_ACTIONS.SENSOR_STATE_UPDATED,
+            payload: state,
+        });
     }
 }
