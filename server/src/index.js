@@ -3,4 +3,4 @@ import { HydroponicManager } from "./managers/HydroponicManager/HydroponicManage
 const hydroponicManager = new HydroponicManager();
 
 
-// sudo apt install -y build-essential python3 добавить в скрипт установки
+// sudo apt install -y build-essential python3 добавить в скрипт установки sudo apt install util-linux-extra

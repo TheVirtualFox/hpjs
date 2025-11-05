@@ -1,36 +1,44 @@
 #!/bin/bash
+# rtc-sync-i2c.sh
+# Синхронизация системного времени с DS3231 через I2C
 
-# Активация RTC модуля DS3231
-echo ds3231 0x68 > /sys/class/i2c-adapter/i2c-0/new_device
+I2C_BUS=0        # Шина, на которой подключен DS3231
+DS3231_ADDR=0x68
 
-# Ожидание появления /dev/rtc1
-for i in {1..10}; do
-    if [ -e /dev/rtc1 ]; then
-        echo "RTC1 device found successfully"
-        break
-    fi
-    sleep 0.5
-done
+# Функция для преобразования BCD в десятичное
+bcd2dec() {
+    echo $(( ($1 >> 4) * 10 + ($1 & 0x0F) ))
+}
 
-# Проверка существования RTC1
-if [ ! -e /dev/rtc1 ]; then
-    echo "ERROR: /dev/rtc1 not found after 5 seconds"
-    exit 1
-fi
+# Чтение регистров DS3231
+read_regs() {
+    # секунды, минуты, часы, день недели, день месяца, месяц, год
+    for reg in {0..6}; do
+        val=$(i2cget -y $I2C_BUS $DS3231_ADDR $reg)
+        regs[$reg]=$((0x${val:2}))  # конвертируем hex в число
+    done
+}
 
-# Синхронизация системного времени с RTC1
-echo "Syncing system time from RTC1..."
-if /sbin/hwclock -f /dev/rtc1 -s; then
-    echo "System time synced from RTC1: $(date)"
-else
-    echo "ERROR: Failed to sync from RTC1"
-    exit 1
-fi
+# Преобразование регистров в обычное время
+regs_to_time() {
+    SEC=$(bcd2dec ${regs[0]})
+    MIN=$(bcd2dec ${regs[1]})
+    HOUR=$(bcd2dec ${regs[2]} & 0x3F)  # 24-часовой формат
+    DAY=$(bcd2dec ${regs[4]})
+    MONTH=$(bcd2dec ${regs[5]} & 0x1F)
+    YEAR=$((2000 + $(bcd2dec ${regs[6]})))
+}
 
-# Сохранение системного времени в RTC0 (опционально)
-echo "Saving system time to RTC0..."
-if /sbin/hwclock -w -f /dev/rtc0; then
-    echo "Time saved to RTC0 successfully"
-else
-    echo "WARNING: Failed to save time to RTC0"
-fi
+# Чтение и преобразование времени
+read_regs
+regs_to_time
+
+# Форматируем для команды date
+DATE_STR=$(printf "%04d-%02d-%02d %02d:%02d:%02d" $YEAR $MONTH $DAY $HOUR $MIN $SEC)
+
+echo "Системное время будет синхронизировано с DS3231: $DATE_STR"
+
+# Устанавливаем системное время
+sudo date -s "$DATE_STR"
+
+echo "Системное время установлено: $(date)"
