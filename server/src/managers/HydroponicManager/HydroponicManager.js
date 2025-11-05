@@ -68,7 +68,8 @@ export class HydroponicManager {
                 controlPanel: this.controlPanel.getState(),
                 relaysState: this.relayManager.getState(),
                 timestamp: this.timeManager.getTimestamp(),
-                presetsList: this.presetManager.getPresetsList()
+                presetsList: this.presetManager.getPresetsList(),
+                sensors: this.sensorManager.getState()
             }
         };
         // ws.write(JSON.stringify(message));
