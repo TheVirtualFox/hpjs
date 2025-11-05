@@ -1,6 +1,6 @@
 #!/bin/bash
 APP_NAME="hpjs"
-APP_PATH="/home/mycodouser/hpjs"
+APP_PATH="/root/hpjs"
 ENTRY_FILE="server/src/index.js"
 
 echo "🚀 Настройка Node.js-сервиса ($APP_NAME) под root..."
