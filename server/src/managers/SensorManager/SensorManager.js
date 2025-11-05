@@ -13,7 +13,7 @@ export class SensorManager {
     }
 
     onTimeChange(secondsOfDay) {
-        if (secondsOfDay % 5 === 0) {
+        if (secondsOfDay % 60 === 0) {
             this.onSensorStateChanged?.(this.getState());
         }
     }
