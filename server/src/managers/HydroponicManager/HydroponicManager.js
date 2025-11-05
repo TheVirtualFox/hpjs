@@ -224,7 +224,7 @@ export class HydroponicManager {
         if (secondsOfDay % 60 === 0) {
             this.onMinuteChanged(this.timeManager.getTimestamp());
         }
-        // this.timeManager.addSecondsOfDay();
+        this.sensorManager.onTimeChange(secondsOfDay);
     }
 
 
