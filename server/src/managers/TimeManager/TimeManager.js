@@ -7,29 +7,24 @@ export class TimeManager {
         this.i2cAddr = i2cAddr;
     }
 
-    // BCD -> Decimal
     bcd2dec(bcd) {
         return ((bcd >> 4) * 10) + (bcd & 0x0F);
     }
 
-    // Decimal -> BCD
     dec2bcd(dec) {
         return ((Math.floor(dec / 10) << 4) | (dec % 10));
     }
 
-    // Чтение регистров DS3231
     readRegs() {
         const regs = [];
         for (let reg = 0; reg <= 6; reg++) {
             const val = execSync(`i2cget -y ${this.i2cBus} ${this.i2cAddr} ${reg}`)
                 .toString().trim();
-            // убираем 0x и конвертируем
             regs[reg] = parseInt(val, 16);
         }
         return regs;
     }
 
-    // Преобразование регистров в объект времени
     regsToTime(regs) {
         const sec = this.bcd2dec(regs[0] & 0x7F);
         const min = this.bcd2dec(regs[1] & 0x7F);
@@ -40,26 +35,24 @@ export class TimeManager {
         return { year, month, day, hour, min, sec };
     }
 
-    // Чтение времени с DS3231
     readRTC() {
-        const regs = this.readRegs();
-        return this.regsToTime(regs);
+        return this.regsToTime(this.readRegs());
     }
 
-    // Установка системного времени
     setSystemTime({ year, month, day, hour, min, sec }) {
         const formatted = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')} ` +
             `${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+        // Убедимся, что NTP выключен
+        try { execSync("sudo timedatectl set-ntp 0"); } catch {}
         execSync(`sudo date -s "${formatted}"`, { stdio: "inherit" });
     }
 
-    // Запись времени в DS3231
     writeRTC({ year, month, day, hour, min, sec }) {
         const regs = [
             this.dec2bcd(sec),
             this.dec2bcd(min),
             this.dec2bcd(hour),
-            0, // день недели (не критично)
+            0, // день недели
             this.dec2bcd(day),
             this.dec2bcd(month),
             this.dec2bcd(year - 2000)
@@ -70,7 +63,6 @@ export class TimeManager {
         }
     }
 
-    // Синхронизация: DS3231 -> системное время
     syncFromRTC() {
         const rtcTime = this.readRTC();
         this.setSystemTime(rtcTime);
@@ -81,43 +73,35 @@ export class TimeManager {
 
     setTimestamp(isoDate) {
         try {
-            // Парсим ISO-строку или берём текущую дату
             const dateObj = isoDate ? new Date(isoDate) : new Date();
 
             const timeObj = {
-                year: dateObj.getFullYear(),
-                month: dateObj.getMonth() + 1, // JS месяц: 0-11
-                day: dateObj.getDate(),
-                hour: dateObj.getHours(),
-                min: dateObj.getMinutes(),
-                sec: dateObj.getSeconds()
+                year: dateObj.getUTCFullYear(),
+                month: dateObj.getUTCMonth() + 1,
+                day: dateObj.getUTCDate(),
+                hour: dateObj.getUTCHours(),
+                min: dateObj.getUTCMinutes(),
+                sec: dateObj.getUTCSeconds()
             };
 
-            console.log(`⏰ Setting time from ISO: ${dateObj.toISOString()}`);
+            console.log(`⏰ Setting system time to: ${dateObj.toISOString()}`);
 
-            // 1️⃣ Устанавливаем системное время
+            // Ставим системное время
             this.setSystemTime(timeObj);
 
-            // 2️⃣ Записываем в DS3231
+            // Записываем в RTC
             this.writeRTC(timeObj);
 
-            // 3️⃣ Колбэк, если есть
             if (this.onTimestampChanged) {
                 this.onTimestampChanged(Math.floor(dateObj.getTime() / 1000));
             }
 
-            console.log("✅ Time set and RTC synchronized successfully.");
+            console.log("✅ Time and RTC synchronized successfully.");
         } catch (err) {
             console.error("❌ Error setting time:", err.message);
         }
     }
 
-    getSecondsOfDay() {
-        const { seconds, minutes, hours } = this.getTime();
-        return hours * 3600 + minutes * 60 + seconds;
-    }
-
-    // Возвращает объект текущего времени
     getTime() {
         const d = new Date();
         return {
@@ -130,8 +114,11 @@ export class TimeManager {
         };
     }
 
+    getSecondsOfDay() {
+        const { hours, minutes, seconds } = this.getTime();
+        return hours * 3600 + minutes * 60 + seconds;
+    }
 
-    // Текущее время в Unix timestamp
     getTimestamp() {
         return Math.floor(Date.now() / 1000);
     }
